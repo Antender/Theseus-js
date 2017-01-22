@@ -1,0 +1,58 @@
+operand 
+   = expr
+   / "false" ws+ {return S("false")} 
+	 / "true" ws+ {return S("true")}
+	 / func
+   / number
+	 / string
+	 / variable
+
+func
+  = "f" ws+ input:(
+    "@" ws* { return S("@")} 
+    / "(" ws* il:identlist? ")" ws* {
+      if (il == null) {
+        return []
+      }
+      return il
+    }) output:(
+      "(" ws* il:identlist ")" ws* {
+        return il
+      }
+      / i:ident 
+    )? bl:block {
+      return [S("f"),input,output,bl]
+    }
+
+ws
+  = " " / "\t" / "\n"
+
+number 
+  = dec:[0-9]+ fl:("." n:[0-9]+ {
+      return n.join("")
+    })? ws* {
+		if (fl == null) {
+			return parseInt(dec.join(""),10)
+		} else {
+			return parseFloat(dec.join("") + "." + fl)}
+			} 
+  / "0"+ "x" hex:[0-9A-Fa-f]+ ws* {
+      return parseInt(hex.join(),16)
+		}
+
+ident 
+  = l:[A-Za-z] r:[A-Za-z0-9]* ws* {
+		  return S(optList(l,r).join("")) 
+		}
+
+identlist
+  = left:ident ("," ws* right:ident)* {
+    return optList(left,right) 
+  }
+
+string 
+  = "\"" content:[^\"]* "\"" ws* {
+	    return content.join("")} /
+		"'" content:[^\']* "'" ws* {
+			return content.join("")
+		}

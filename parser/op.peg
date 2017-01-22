@@ -1,0 +1,69 @@
+expr 
+  = "(" ws* expr:expr0 ")" ws* p:postfix? {
+    if (p == null) {
+      return expr
+    }
+    return concatPost("expr",expr,p)
+  }
+
+expr0 
+  = left:expr1 tail:binop0* ws* {
+		  return consBinop(left,tail)}
+
+binop0 
+  = op:("@-") ws* right:expr1 {
+		  return [S(op), right]}
+
+expr1 
+  = left:expr2 tail:binop1* ws* {
+		  return consBinop(left,tail)}
+
+binop1 
+  = op:("@<" / "@>" / "@/") ws* right:expr2 {
+		  return [S(op), right]}
+
+expr2 
+  = left:expr3 tail:binop2* ws* {
+		  return consBinop(left,tail)}
+
+binop2 
+  = op:("+=" / "-=" / "*=" /
+        "/=" / ">>=" / "<<=" / "=") ws* right:expr3 {
+		  return [S(op), right]}
+
+expr3 
+  = left:expr4 tail:binop3* ws* {
+		  return consBinop(left,tail)}
+
+binop3 
+  = op:("<>" / "<=" / "<" / 
+	      ">=" / ">" /
+				"==" / "!=") ws* right:expr4 {
+			return [S(op), right]}
+
+expr4 
+  = left:expr5 tail:binop4* ws* {
+		  return consBinop(left,tail)}
+
+binop4 
+  = op:( "+" / "-" / "||" / 
+				"|" / "^") ws* right:expr5 {
+			return [S(op),right]}
+
+expr5 
+  = left:unop tail:binop5* ws* {
+		  return consBinop(left,tail)}
+
+binop5 
+  = op:("%" / "*" / "<<" / ">>"
+	      "/" / "&&" / "&") ws* right:unop {
+			return [S(op), right]}
+
+unop
+  = op:( "+" / "-" / "!" / "~")? ws* right:operand {
+		  if (op != null) {
+				return [S(op), right]
+			} else {
+				return right
+			}
+	  }

@@ -1,0 +1,30 @@
+block 
+  = "{" ws* st:statement* "}" ws* {
+		if (st == []) {
+			return [S("nop")]
+		}
+		st.unshift(S("block"))
+		return st
+	}
+
+statement 
+	= "while" ws* exp:expr0 ws* block:block {
+		return [S("while"),exp,block]
+	} 
+  / "if" ws* exp:expr0 ws* block:block ws* ebl:("else" ws* block {
+    return block
+  })? {
+    if (ebl != null) {
+		  return [S("if"),exp,block,ebl]
+    } else {
+      return [S("if"),exp,block]
+    }
+	} 
+  / "foreach" ws* ident:ident ws* "in" ws* exp:expr0 ws* bl:block {
+		return [S("foreach"),ident,exp,bl]
+	} 
+  / "for" ws* i:ident "=" ws* e1:expr0 "," ws* e2:expr0 "," ws* e3:expr0 bl:block {
+    return [S("for"),i,e1,e2,e3,bl]
+	} 
+  / expr
+  / expr0

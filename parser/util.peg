@@ -1,0 +1,37 @@
+//Utilities
+
+{
+	function consBinop(left,tail) {
+			var out = left;
+			for (var index in tail) {
+				out = [tail[index][0],out,tail[index][1]]
+			}
+			return out;
+	}
+
+	function optList(left, right) {
+		if (right == null) {
+			right = []
+		}
+		right.unshift(left)
+		return right
+	}
+
+	function S(str) {
+	  return {symbol : true, data : str} 
+	}
+
+  function concatPost(sym,data,post) {
+    var res = [S(sym),data]
+    if (post != null) {
+      res = res.concat(post)
+    }
+    return res
+  }
+
+  function unHex(ch) {
+    switch (ch) {
+      
+    }
+  }
+}

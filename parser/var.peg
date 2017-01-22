@@ -1,0 +1,17 @@
+variable =
+  i:ident ws* p:postfix? {
+    return concatPost("var",i,p)
+  }
+
+postfix 
+  = "." ws* "(" ws* e:expr0 ")" ws* p:postfix? {
+    return concatPost("index",e,p)
+  }
+  / "." ws* i:ident ws* p:postfix? {
+    return concatPost("index",i,p)
+  }
+  / "(" ws* left:expr0 right:(
+      "," exp:expr0 { return exp }
+    )* ")" ws* p:postfix? {
+		return concatPost("funcall",optList(left,right),p)
+	  } 

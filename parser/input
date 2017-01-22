@@ -1,0 +1,6 @@
+{
+  acc = 1
+  for acc = 0, acc < n, acc = acc + 1 {
+    acc = acc * n
+  }
+}
